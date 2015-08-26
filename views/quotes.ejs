@@ -20,6 +20,7 @@
 				<td><%= users[x].quote %></td>
 				<td><%= users[x].like %></td>
 				<td><a class="waves-effect waves-light btn" href="/like/<%= users[x]._id %>">like</a></td>
+				<td><a class="waves-effect waves-light btn" href="/delete/<%= users[x]._id %>">delete</a></td>
 			</tr>
 				<% } %>
 			</table>

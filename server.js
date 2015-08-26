@@ -39,14 +39,23 @@ app.get('/like/:id', function(req, res) {
     User.update( 
 	 {_id:req.params.id},
 	 {$inc: {like:1} },
-       function(err,results){ console.log('err2'); console.log('yo liked', results); } 
-	);
+	 function(err,results){ console.log('err2'); console.log('yo liked', results); } 
+		);
 	console.log('yo liked saved');
 	User.find({}, function(err, users) {
 	//console.log("3c find all", users)
 	res.redirect('/quotes');
  	})//ends user.find
 })//ends app.get like
+
+app.get('/delete/:id', function(req,res) {
+	console.log('delete', req.params.id);
+	User.remove(
+		{_id:req.params.id},
+		function(err, users) {
+			res.redirect('/quotes');
+		});
+})//ends app.get delete
 
 
 //this page will display all the quotes
