@@ -21,7 +21,8 @@ mongoose.connect('mongodb://localhost/basic_mongoose');
 //#2a create Schema, named User
 var UserSchema = new mongoose.Schema({
 	name: String,
-	quote: String
+	quote: String,
+	like: Number
 })
 //#2b create object for Schema, TIP: number is practice
 //see file name
@@ -29,21 +30,48 @@ var User = mongoose.model('User4d', UserSchema);
 
 // root route
 app.get('/', function(req, res) {
- // This is where we would get the users from the database and send them to the index view to be displayed.
- //#3c read all
- User.find({}, function(err, users) {
- 	console.log("3c find all", users)
- 	//#3d reload index, and return key-value pair object as data
- 	res.render('index', {users:users});
- })
+	res.render('index')
+	console.log('yo root page displayed')
 })
+
+app.get('/like/:id', function(req, res) {
+	console.log('like', req.params.id);
+    User.update( 
+	 {_id:req.params.id},
+	 {$inc: {like:1} },
+       function(err,results){ console.log('err2'); console.log('yo liked', results); } 
+	);
+	console.log('yo liked saved');
+	User.find({}, function(err, users) {
+	//console.log("3c find all", users)
+	res.redirect('/quotes');
+ 	})//ends user.find
+})//ends app.get like
+
+
+//this page will display all the quotes
+app.get('/quotes', function(req, res) {
+	// This is where we would get the users from the database and send them to the index view to be displayed.
+	//#3c read all
+	User.find({}, function(err, users) {
+	console.log("3c find all", users)
+	//#3d reload index, and return key-value pair object as data
+	res.render('quotes', {users:users});
+ })//ends user.find
+})//ends app.get quotes
+
+
 // route to add a user
 app.post('/users', function(req, res) {
  console.log("POST DATA", req.body);
  // This is where we would add the user from req.body to the database.
  //#3 CRUD
  //#3a create a new user object that will look in the request
- var user = new User({name: req.body.name, quote: req.body.quote});
+ var user = new User({
+ 	name: req.body.name, 
+ 	quote: req.body.quote,
+ 	like: req.body.like
+ });
  //#3b save data, callback will handles err
  user.save(function(err) {
  	if(err) {
